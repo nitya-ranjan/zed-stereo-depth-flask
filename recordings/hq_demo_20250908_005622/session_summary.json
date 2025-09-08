@@ -1,0 +1,16 @@
+{
+  "session_id": "hq_demo_20250908_005622",
+  "start_time": "2025-09-08T00:56:23.015201",
+  "total_detections": 16,
+  "vehicle_detections": 0,
+  "person_detections": 10,
+  "detection_history": [],
+  "session_dir": "recordings/hq_demo_20250908_005622",
+  "recording_fps": 30.0,
+  "yolo_frequency": "Every frame",
+  "quality_mode": "High Quality",
+  "end_time": "2025-09-08T00:56:31.949535",
+  "duration_seconds": 8.934315204620361,
+  "total_frames": 16,
+  "actual_fps": 1.7908479422939585
+}

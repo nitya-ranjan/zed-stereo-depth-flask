@@ -1,0 +1,12 @@
+{
+  "session_id": "demo_20250908_012724",
+  "start_time": "2025-09-08T01:27:24.230088",
+  "total_detections": 0,
+  "vehicle_detections": 0,
+  "person_detections": 0,
+  "detection_history": [],
+  "session_dir": "recordings/demo_20250908_012724",
+  "end_time": "2025-09-08T01:27:43.449672",
+  "duration_seconds": 19.219592094421387,
+  "total_frames": 0
+}

@@ -1,0 +1,8 @@
+ZED Camera Capture Summary
+==============================
+camera_serial: 3585
+resolution: 1280x720
+fps: 30.0
+frames_captured: 10
+distances_mm: []
+timestamp: 20250907_232822

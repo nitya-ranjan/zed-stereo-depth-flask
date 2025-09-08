@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(wget:*)",
+      "Bash(pkill:*)",
+      "Bash(curl:*)",
+      "Bash(chmod:*)",
+      "Bash(./download_recordings.sh:*)",
+      "Bash(tailscale:*)",
+      "Bash(systemctl status:*)",
+      "Bash(pip3 list:*)",
+      "Bash(dpkg:*)",
+      "Bash(snap list:*)",
+      "Bash(echo $DISPLAY)",
+      "Bash(chromium-browser:*)",
+      "Bash(firefox:*)",
+      "Bash(sudo apt:*)",
+      "Bash(snap info:*)",
+      "Bash(snap connections:*)",
+      "Bash(./start_demo.sh:*)",
+      "Bash(kill:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git remote add:*)",
+      "Bash(git config:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)",
+      "Bash(gh repo set-default:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git reset:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
