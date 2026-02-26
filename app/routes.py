@@ -95,6 +95,15 @@ def video_depth():
     )
 
 
+@main_bp.route("/video/detections")
+def video_detections():
+    """MJPEG stream of colour feed with YOLO detection overlays."""
+    return Response(
+        _generate_mjpeg("annotated"),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+
 # ---------------------------------------------------------------------------
 # REST API
 # ---------------------------------------------------------------------------
@@ -191,4 +200,49 @@ def api_snapshot_depth():
     if frame is None or frame.depth_colorized is None:
         return jsonify({"error": "no frame available"}), 503
     jpeg = encode_frame_jpeg(frame.depth_colorized, quality=90)
+    return Response(jpeg, mimetype="image/jpeg")
+
+
+# ---------------------------------------------------------------------------
+# Detection API
+# ---------------------------------------------------------------------------
+
+@api_bp.route("/detections")
+def api_detections():
+    """Return the latest YOLO detections with distance estimates."""
+    cam = _camera()
+    frame = cam.latest_frame
+    if frame is None:
+        return jsonify({"error": "no frame available"}), 503
+    return jsonify({
+        "count": len(frame.detections),
+        "detections": [d.to_dict() for d in frame.detections],
+    })
+
+
+@api_bp.route("/detections/summary")
+def api_detections_summary():
+    """Summarised detection counts grouped by class name."""
+    cam = _camera()
+    frame = cam.latest_frame
+    if frame is None:
+        return jsonify({"error": "no frame available"}), 503
+    summary = {}
+    for det in frame.detections:
+        entry = summary.setdefault(det.class_name, {"count": 0, "nearest_m": None})
+        entry["count"] += 1
+        if det.distance_m is not None:
+            if entry["nearest_m"] is None or det.distance_m < entry["nearest_m"]:
+                entry["nearest_m"] = det.distance_m
+    return jsonify(summary)
+
+
+@api_bp.route("/snapshot/detections")
+def api_snapshot_detections():
+    """Single JPEG frame with detection bounding boxes drawn."""
+    cam = _camera()
+    frame = cam.latest_frame
+    if frame is None or frame.annotated is None:
+        return jsonify({"error": "no frame or detections available"}), 503
+    jpeg = encode_frame_jpeg(frame.annotated, quality=90)
     return Response(jpeg, mimetype="image/jpeg")

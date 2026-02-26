@@ -17,7 +17,7 @@
 
   <main>
     <!-- Video feeds -->
-    <section class="streams">
+    <section class="streams streams-3col">
       <div class="stream-card">
         <h2>Color Feed</h2>
         <div class="stream-wrapper">
@@ -29,6 +29,12 @@
         <h2>Depth Map</h2>
         <div class="stream-wrapper">
           <img id="depth-feed" src="/video/depth" alt="Depth feed">
+        </div>
+      </div>
+      <div class="stream-card">
+        <h2>YOLO Detections + Distance</h2>
+        <div class="stream-wrapper">
+          <img id="detection-feed" src="/video/detections" alt="Detection feed">
         </div>
       </div>
     </section>
@@ -68,6 +74,12 @@
       <div class="card" id="histogram-card">
         <h3>Depth Histogram</h3>
         <canvas id="histogram-canvas" width="320" height="150"></canvas>
+      </div>
+
+      <div class="card" id="detections-card">
+        <h3>Detected Objects</h3>
+        <div id="detection-count" class="detection-count">0 objects</div>
+        <div id="detections-list" class="detections-list"></div>
       </div>
     </section>
   </main>

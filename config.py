@@ -23,6 +23,11 @@ class Config:
     STREAM_WIDTH = int(os.environ.get("STREAM_WIDTH", "640"))
     STREAM_HEIGHT = int(os.environ.get("STREAM_HEIGHT", "360"))
 
+    # YOLO detection settings
+    YOLO_MODEL = os.environ.get("YOLO_MODEL", "yolo11n.pt")
+    YOLO_CONFIDENCE = float(os.environ.get("YOLO_CONFIDENCE", "0.35"))
+    YOLO_DEVICE = os.environ.get("YOLO_DEVICE", "cpu")
+
 
 class DevelopmentConfig(Config):
     DEBUG = True

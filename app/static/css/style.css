@@ -68,6 +68,10 @@ main {
   margin-bottom: 1.5rem;
 }
 
+.streams.streams-3col {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 .stream-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -198,9 +202,66 @@ main {
   border-radius: 4px;
 }
 
+/* ── Detection list ──────────────────────────────────────────── */
+.detection-count {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 0.5rem;
+}
+
+.detections-list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.det-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+
+.det-item:last-child { border-bottom: none; }
+
+.det-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.det-name {
+  flex: 1;
+  color: var(--text);
+}
+
+.det-conf {
+  color: var(--text-dim);
+  min-width: 40px;
+  text-align: right;
+}
+
+.det-dist {
+  color: var(--warning);
+  font-weight: 600;
+  min-width: 55px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .streams.streams-3col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 800px) {
-  .streams {
+  .streams,
+  .streams.streams-3col {
     grid-template-columns: 1fr;
   }
   header {

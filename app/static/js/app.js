@@ -24,6 +24,15 @@
   const histCanvas = document.getElementById("histogram-canvas");
   const histCtx = histCanvas.getContext("2d");
 
+  const detectionCount = document.getElementById("detection-count");
+  const detectionsList = document.getElementById("detections-list");
+
+  // Colour palette matching Python _PALETTE
+  var PALETTE = [
+    "#00ff80", "#ff8000", "#8000ff", "#00c8ff", "#ff0080",
+    "#80ff00", "#ffff00", "#0080ff", "#ff00ff", "#00ffff",
+  ];
+
   // ── Status polling ──────────────────────────────────────────
   function pollStatus() {
     fetch("/api/status")
@@ -156,10 +165,50 @@
     histCtx.fillText(edges[edges.length - 1].toFixed(1) + "m", W - 2, H - 4);
   }
 
+  // ── Detections polling ──────────────────────────────────────
+  function pollDetections() {
+    fetch("/api/detections")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.error) return;
+        detectionCount.textContent = d.count + " object" + (d.count !== 1 ? "s" : "");
+        detectionsList.innerHTML = "";
+        d.detections.forEach(function (det) {
+          var item = document.createElement("div");
+          item.className = "det-item";
+
+          var dot = document.createElement("span");
+          dot.className = "det-color";
+          dot.style.background = PALETTE[det.class_id % PALETTE.length];
+
+          var name = document.createElement("span");
+          name.className = "det-name";
+          name.textContent = det.class_name;
+
+          var conf = document.createElement("span");
+          conf.className = "det-conf";
+          conf.textContent = (det.confidence * 100).toFixed(0) + "%";
+
+          var dist = document.createElement("span");
+          dist.className = "det-dist";
+          dist.textContent = det.distance_m != null ? det.distance_m.toFixed(1) + " m" : "- m";
+
+          item.appendChild(dot);
+          item.appendChild(name);
+          item.appendChild(conf);
+          item.appendChild(dist);
+          detectionsList.appendChild(item);
+        });
+      })
+      .catch(function () {});
+  }
+
   // ── Polling intervals ───────────────────────────────────────
   pollStatus();
   setInterval(pollStatus, 3000);
   setInterval(pollStats, 1000);
   setInterval(pollObstacles, 1000);
   setInterval(pollHistogram, 1500);
+  setInterval(pollDetections, 800);
+  pollDetections();
 })();

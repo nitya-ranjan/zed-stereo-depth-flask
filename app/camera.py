@@ -38,14 +38,33 @@ if ZED_SDK_AVAILABLE:
 class DepthFrame:
     """Container for a single captured frame pair."""
 
-    __slots__ = ("color", "depth", "depth_colorized", "point_cloud", "timestamp")
+    __slots__ = (
+        "color",
+        "depth",
+        "depth_colorized",
+        "point_cloud",
+        "timestamp",
+        "detections",
+        "annotated",
+    )
 
-    def __init__(self, color, depth, depth_colorized, point_cloud=None, timestamp=None):
+    def __init__(
+        self,
+        color,
+        depth,
+        depth_colorized,
+        point_cloud=None,
+        timestamp=None,
+        detections=None,
+        annotated=None,
+    ):
         self.color = color
         self.depth = depth
         self.depth_colorized = depth_colorized
         self.point_cloud = point_cloud
         self.timestamp = timestamp or time.time()
+        self.detections = detections or []
+        self.annotated = annotated  # colour image with detection boxes drawn
 
 
 class ZEDCamera:
@@ -58,6 +77,7 @@ class ZEDCamera:
         self._thread = None
         self._latest_frame = None
         self._camera = None
+        self._detector = None
 
     # -- public API -----------------------------------------------------------
 
@@ -77,9 +97,38 @@ class ZEDCamera:
 
         if ZED_SDK_AVAILABLE:
             self._open_zed()
+
+        # Lazy-init the YOLO detector
+        self._init_detector()
+
         self._running = True
         self._thread = threading.Thread(target=self._capture_loop, daemon=True)
         self._thread.start()
+
+    def _init_detector(self):
+        """Initialise the YOLO detector if ultralytics is available."""
+        try:
+            from app.detector import get_detector
+
+            model = self._config.get("YOLO_MODEL", "yolo11n.pt")
+            conf = self._config.get("YOLO_CONFIDENCE", 0.35)
+            device = self._config.get("YOLO_DEVICE", "cpu")
+            self._detector = get_detector(model, conf, device)
+        except Exception:
+            self._detector = None
+
+    def _run_detection(self, color, depth):
+        """Run YOLO on a frame and return (detections, annotated_image)."""
+        if self._detector is None:
+            return [], None
+        try:
+            from app.detector import ObjectDetector
+
+            detections = self._detector.detect(color, depth)
+            annotated = ObjectDetector.draw_detections(color, detections)
+            return detections, annotated
+        except Exception:
+            return [], None
 
     def close(self):
         """Release the camera resources."""
@@ -155,7 +204,11 @@ class ZEDCamera:
                 depth_vis = depth_vis_mat.get_data()[:, :, :3].copy()
                 pc = point_cloud_mat.get_data().copy()
 
-                frame = DepthFrame(color, depth, depth_vis, pc)
+                detections, annotated = self._run_detection(color, depth)
+                frame = DepthFrame(
+                    color, depth, depth_vis, pc,
+                    detections=detections, annotated=annotated,
+                )
                 with self._lock:
                     self._latest_frame = frame
             else:
@@ -175,7 +228,11 @@ class ZEDCamera:
             depth = self._make_simulated_depth(w, h, t)
             depth_colorized = self._colorize_depth(depth)
 
-            frame = DepthFrame(color, depth, depth_colorized)
+            detections, annotated = self._run_detection(color, depth)
+            frame = DepthFrame(
+                color, depth, depth_colorized,
+                detections=detections, annotated=annotated,
+            )
             with self._lock:
                 self._latest_frame = frame
 

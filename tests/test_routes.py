@@ -9,6 +9,7 @@ import pytest
 
 from app import create_app
 from app.camera import DepthFrame, ZEDCamera, _camera_lock, get_camera
+from app.detector import Detection
 import app.camera as camera_module
 
 
@@ -41,7 +42,15 @@ def client_with_frame(client):
         fake_color = np.zeros((100, 100, 3), dtype=np.uint8)
         fake_depth = np.full((100, 100), 3.0, dtype=np.float32)
         fake_depth_vis = np.zeros((100, 100, 3), dtype=np.uint8)
-        cam._latest_frame = DepthFrame(fake_color, fake_depth, fake_depth_vis)
+        fake_annotated = np.zeros((100, 100, 3), dtype=np.uint8)
+        fake_detections = [
+            Detection(0, "person", 0.95, (10, 10, 60, 80), 3.0),
+            Detection(2, "car", 0.82, (50, 30, 90, 70), 5.2),
+        ]
+        cam._latest_frame = DepthFrame(
+            fake_color, fake_depth, fake_depth_vis,
+            detections=fake_detections, annotated=fake_annotated,
+        )
         cam._running = True
     return client
 
@@ -118,5 +127,31 @@ class TestAPISnapshots:
 
     def test_depth_snapshot(self, client_with_frame):
         resp = client_with_frame.get("/api/snapshot/depth")
+        assert resp.status_code == 200
+        assert resp.content_type == "image/jpeg"
+
+
+class TestAPIDetections:
+    def test_detections_list(self, client_with_frame):
+        resp = client_with_frame.get("/api/detections")
+        assert resp.status_code == 200
+        data = json.loads(resp.data)
+        assert data["count"] == 2
+        assert len(data["detections"]) == 2
+        assert data["detections"][0]["class_name"] == "person"
+        assert data["detections"][0]["distance_m"] == 3.0
+        assert data["detections"][1]["class_name"] == "car"
+
+    def test_detections_summary(self, client_with_frame):
+        resp = client_with_frame.get("/api/detections/summary")
+        assert resp.status_code == 200
+        data = json.loads(resp.data)
+        assert "person" in data
+        assert data["person"]["count"] == 1
+        assert data["person"]["nearest_m"] == 3.0
+        assert "car" in data
+
+    def test_detection_snapshot(self, client_with_frame):
+        resp = client_with_frame.get("/api/snapshot/detections")
         assert resp.status_code == 200
         assert resp.content_type == "image/jpeg"
