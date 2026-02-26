@@ -20,3 +20,6 @@ venv/
 *.svo
 *.svo2
 recordings/
+*.pt
+*.onnx
+*.engine
