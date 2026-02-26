@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZED Stereo Depth Viewer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>ZED Stereo Depth Viewer</h1>
+    <div id="status-indicator" class="status disconnected">
+      <span class="dot"></span>
+      <span id="status-text">Connecting&hellip;</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Video feeds -->
+    <section class="streams">
+      <div class="stream-card">
+        <h2>Color Feed</h2>
+        <div class="stream-wrapper">
+          <img id="color-feed" src="/video/color" alt="Color feed">
+          <canvas id="color-overlay" class="overlay-canvas"></canvas>
+        </div>
+      </div>
+      <div class="stream-card">
+        <h2>Depth Map</h2>
+        <div class="stream-wrapper">
+          <img id="depth-feed" src="/video/depth" alt="Depth feed">
+        </div>
+      </div>
+    </section>
+
+    <!-- Depth info panel -->
+    <section class="info-panel">
+      <div class="card" id="depth-stats-card">
+        <h3>Depth Statistics</h3>
+        <table id="stats-table">
+          <tr><td>Min</td><td id="stat-min">-</td></tr>
+          <tr><td>Max</td><td id="stat-max">-</td></tr>
+          <tr><td>Mean</td><td id="stat-mean">-</td></tr>
+          <tr><td>Median</td><td id="stat-median">-</td></tr>
+          <tr><td>Std Dev</td><td id="stat-std">-</td></tr>
+          <tr><td>Valid %</td><td id="stat-valid">-</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="cursor-depth-card">
+        <h3>Point Depth</h3>
+        <p>Click on the colour feed to query depth.</p>
+        <div id="cursor-depth-value" class="big-value">-</div>
+        <span class="unit">metres</span>
+      </div>
+
+      <div class="card" id="obstacle-card">
+        <h3>Obstacle Grid</h3>
+        <div class="obstacle-controls">
+          <label>Threshold (m):
+            <input type="range" id="obstacle-threshold" min="0.5" max="10" step="0.5" value="1.5">
+            <span id="threshold-display">1.5</span>
+          </label>
+        </div>
+        <div id="obstacle-grid" class="obstacle-grid"></div>
+      </div>
+
+      <div class="card" id="histogram-card">
+        <h3>Depth Histogram</h3>
+        <canvas id="histogram-canvas" width="320" height="150"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

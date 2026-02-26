@@ -1,0 +1,211 @@
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --border: #2a2e3a;
+  --text: #e0e0e6;
+  --text-dim: #8b8fa3;
+  --accent: #6c5ce7;
+  --accent-light: #a29bfe;
+  --danger: #e74c3c;
+  --success: #2ecc71;
+  --warning: #f39c12;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status.connected .dot { background: var(--success); }
+.status.disconnected .dot { background: var(--danger); }
+
+/* ── Main layout ─────────────────────────────────────────────── */
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* ── Streams ─────────────────────────────────────────────────── */
+.streams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stream-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.stream-card h2 {
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.stream-wrapper {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+
+.stream-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── Info panel ──────────────────────────────────────────────── */
+.info-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.card h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Stats table ─────────────────────────────────────────────── */
+#stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#stats-table td {
+  padding: 0.3rem 0;
+  font-size: 0.85rem;
+}
+
+#stats-table td:first-child {
+  color: var(--text-dim);
+  width: 40%;
+}
+
+#stats-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Big value display ───────────────────────────────────────── */
+.big-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* ── Obstacle grid ───────────────────────────────────────────── */
+.obstacle-controls {
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.obstacle-controls input[type="range"] {
+  width: 120px;
+  vertical-align: middle;
+  margin: 0 0.25rem;
+}
+
+.obstacle-grid {
+  display: grid;
+  gap: 3px;
+}
+
+.obstacle-cell {
+  aspect-ratio: 1.5;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.obstacle-cell.clear { background: rgba(46, 204, 113, 0.25); }
+.obstacle-cell.obstacle { background: rgba(231, 76, 60, 0.5); }
+
+/* ── Histogram ───────────────────────────────────────────────── */
+#histogram-canvas {
+  width: 100%;
+  height: 150px;
+  border-radius: 4px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .streams {
+    grid-template-columns: 1fr;
+  }
+  header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}
